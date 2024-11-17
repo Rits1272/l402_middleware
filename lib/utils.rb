@@ -28,9 +28,7 @@ def get_macaroon_details(macaroon)
 end
 
 def get_macaroon_signature(macaroon)
-  serialized_macaroon = macaroon.serialize
-  serialized_macaroon
-  # Base64.encode64(serialized_macaroon)
+  Base64.encode64(macaroon.serialize)
 end
 
 # https://github.com/lightninglabs/L402/blob/master/protocol-specification.md#http-specification

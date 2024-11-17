@@ -92,8 +92,6 @@ module L402Middleware
       }
       response = is_unauthorized ? unauthorized_response : request_payment_response(macaroon, invoice)
 
-      L402Logger.info("response: #{response}")
-
       [status, header, [response]]
     end
 
