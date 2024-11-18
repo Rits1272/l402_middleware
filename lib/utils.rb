@@ -7,14 +7,6 @@ require 'json'
 require 'l402_logger'
 require 'constants'
 
-# Retrieves the details of a macaroon by accessing its instance variables.
-#
-# This method extracts the instance variables of the provided macaroon's internal
-# `@raw_macaroon` object and returns them as a hash, where the keys are the names of
-# the instance variables (as symbols) and the values are the corresponding values.
-#
-# @param macaroon [Macaroon] the macaroon object from which details are extracted.
-# @return [Hash] a hash containing the instance variable names (as symbols) and their values.
 def get_macaroon_details(macaroon)
   return {} unless macaroon.is_a?(Macaroon)
 

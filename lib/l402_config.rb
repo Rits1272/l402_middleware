@@ -4,7 +4,7 @@ require 'l402_logger'
 
 module L402Middleware
   class Configuration
-    attr_accessor :network_type, :root_key, :caveats, :lnd, :lnurl
+    attr_reader :network_type, :root_key, :caveats, :lnd, :lnurl
 
     REQUIRED_KEYS = {
       lnd: %i[address tls_certificate_path macaroon_path],

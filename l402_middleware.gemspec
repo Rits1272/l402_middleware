@@ -14,4 +14,6 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency 'google-protobuf', '3.25.4'
   s.add_runtime_dependency 'lighstorm'
   s.add_runtime_dependency 'macaroons'
+
+  s.add_development_dependency 'rspec'
 end

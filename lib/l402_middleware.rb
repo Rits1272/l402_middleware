@@ -72,7 +72,6 @@ module L402Middleware
       macaroons = macaroon_part.split(',').map(&:strip)
 
       macaroons.each  do |macaroon|
-        L402Logger.info("MACAROON: #{macaroon}")
         decoded_macaroon = Base64.strict_decode64(macaroon)
         result, err = L402.verify_l402(decoded_macaroon, preimage, @config)
 
