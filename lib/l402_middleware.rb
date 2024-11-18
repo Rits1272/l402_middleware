@@ -26,8 +26,10 @@ module L402Middleware
       # L402Logger.debug("Processing request with env: #{env.to_h}")
 
       token = extract_auth_token(env)
-      return allow_request(env) if valid_l402_token?(token)
-        
+      is_valid_l402_token, err = valid_l402_token?(token)
+
+      return allow_request(env) if is_valid_l402_token.to_s == "true" && err.nil?
+
       is_unauthorized = env[L402_AUTHORIZATION_HEADER].present? 
 
       invoke_payment(is_unauthorized)
@@ -59,22 +61,28 @@ module L402Middleware
 
     # Example token: L402 AGIAJEemVQUTEyNCR0exk7ek90Cg==:1234abcd1234abcd1234abcd
     def valid_l402_token?(token)
-      return false unless token.to_s.downcase.start_with?("#{L402_HEADER} ")
+      return [false, 'missing L02 header'] unless token.to_s.downcase.start_with?("#{L402_HEADER} ")
 
-      token = token.sub("#{L402_HEADER} ", '')
+      token = token.sub(sub_l402_header_regex, "")
+
       macaroon_part, preimage = token.split(':', 2)
 
-      return false if macaroon_part.blank? || preimage.blank?
+      return [false, 'missing macaroon or primage'] if macaroon_part.blank? || preimage.blank?
 
-      macaroons = macaroon_part.split(',')
+      macaroons = macaroon_part.split(',').map(&:strip)
 
-      macaroons.any? do |macaroon|
-        decoded_macaroon = Base64.decode64(macaroon)
-        L402.verify_l402(decoded_macaroon, preimage, @config)
+      macaroons.each  do |macaroon|
+        L402Logger.info("MACAROON: #{macaroon}")
+        decoded_macaroon = Base64.strict_decode64(macaroon)
+        result, err = L402.verify_l402(decoded_macaroon, preimage, @config)
+
+        return [true, nil] if result.to_s == "true" && err.nil?
       rescue StandardError => e
         L402Logger.error("Error verifying macaroon: #{e.message}")
-        false
+        return [false, "error verifying macaroon: #{e.message}"] 
       end
+
+      return [false, 'unauthorized']
     end
 
     def allow_request(env)

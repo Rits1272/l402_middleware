@@ -1,9 +1,11 @@
 # frozen_string_literal: true
 
 require 'macaroons'
-require 'json'
-require 'l402_logger'
 require 'base64'
+require 'json'
+
+require 'l402_logger'
+require 'constants'
 
 # Retrieves the details of a macaroon by accessing its instance variables.
 #
@@ -28,7 +30,12 @@ def get_macaroon_details(macaroon)
 end
 
 def get_macaroon_signature(macaroon)
-  Base64.encode64(macaroon.serialize)
+  Base64.strict_encode64(macaroon.serialize)
+end
+
+def sub_l402_header_regex
+  l402_header_size = L402_HEADER.size + 1 # including whitespace
+  /^.{#{l402_header_size}}/
 end
 
 # https://github.com/lightninglabs/L402/blob/master/protocol-specification.md#http-specification

@@ -24,6 +24,8 @@ class L402
   # @param root_key [String] the root key used to validate the macaroon.
   # @return [Array<(Boolean, String)>] returns a boolean indicating validity and an error message if invalid.
   def self.verify_l402(macaroon, preimage, config)
+    mac = Macaroon.new(key: config.root_key, identifier: macaroon, location: L402_ORIGIN)
+
     verifier = Macaroon::Verifier.new
     config.caveats.each do |caveat|
       verifier.satisfy_exact(caveat)
@@ -31,7 +33,7 @@ class L402
 
     begin
       verifier.verify(
-        macaroon: macaroon,
+        macaroon: mac,
         key: config.root_key
       )
     rescue StandardError => e
@@ -39,7 +41,7 @@ class L402
     end
 
     preimage_hash = Digest::SHA256.hexdigest(preimage)
-    get_macaroon_details(macaroon)[:@identifier]
+    macaroon_id = get_macaroon_details(mac)[:@identifier]
 
     macaroon_id.to_s == preimage_hash.to_s ? [true, nil] : [false, 'invalid preimage']
   end

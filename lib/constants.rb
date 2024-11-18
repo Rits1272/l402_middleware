@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-L402_HEADER = 'L402'
+L402_HEADER = 'l402'
 L402_AUTHORIZATION_HEADER = 'HTTP_AUTHORIZATION'
 L402_CHALLENGE_HEADER = 'WWW-Authenticate'
 
