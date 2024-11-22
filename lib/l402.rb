@@ -8,21 +8,21 @@ require 'utils'
 require 'constants'
 require 'l402_logger'
 
-# The L402 class implements authentication and payment handling using the L402 protocol.
-# L402 leverages macaroons for access control and the Lightning Network for payments.
+# The L402 class provides authentication and payment handling using the L402 protocol.
+# It leverages macaroons for access control and the Lightning Network for payments.
 #
-# This class provides methods for:
-# - Verifying macaroons against predefined caveats and preimages.
-# - Generating invoices through the Lightning Network.
-# - Creating payment request details, including macaroons and invoices.
+# This class includes methods to:
+# - Verify macaroons against caveats and preimages.
+# - Generate Lightning Network invoices.
+# - Create payment request details with associated macaroons and invoices.
 class L402
-  # Verifies a macaroon using the given caveats, preimage, and root key.
+  # Verifies the validity of a macaroon against a preimage and predefined caveats.
   #
-  # @param macaroon [String] the macaroon to verify.
-  # @param caveats [Array<String>] the list of caveats to satisfy
-  # @param preimage [String] the preimage to validate against the macaroon's identifier.
-  # @param root_key [String] the root key used to validate the macaroon.
-  # @return [Array<(Boolean, String)>] returns a boolean indicating validity and an error message if invalid.
+  # @param macaroon [String] The macaroon string to be verified.
+  # @param preimage [String] The preimage to match against the macaroon's identifier.
+  # @param config [Object] Configuration containing the root key and caveats.
+  # @return [Array(Boolean, String)] Returns a tuple where the first element is a
+  #   boolean indicating success, and the second is an error message or nil.
   def self.verify_l402(macaroon, preimage, config)
     mac = Macaroon.new(key: config.root_key, identifier: macaroon, location: L402_ORIGIN)
 
@@ -46,11 +46,12 @@ class L402
     macaroon_id.to_s == preimage_hash.to_s ? [true, nil] : [false, 'invalid preimage']
   end
 
-  # Generates a payment invoice using the Lightning Network.
+  # Generates a Lightning Network invoice with the specified description and amount.
   #
-  # @param description [String] a description of the invoice.
-  # @param amount [Integer] the amount to be paid in millisatoshis.
-  # @return [Lighstorm::Lightning::Invoice] the generated invoice object.
+  # @param description [String] Description of the payment associated with the invoice.
+  # @param amount [Integer] Amount in millisatoshis (msat) to be paid.
+  # @return [Hash] Returns a hash representation of the created invoice.
+  # @raise [StandardError] Raises an error if invoice generation fails.
   def self.generate_invoice(description, amount)
     Lighstorm::Lightning::Invoice.create(
       description: description,
@@ -62,12 +63,10 @@ class L402
     raise "Unable to generate invoice: #{e.message}"
   end
 
-  # Creates a payment request including a macaroon and an invoice.
+  # Creates payment request details, including a macaroon and Lightning Network invoice.
   #
-  # @param root_key [String] the root key to generate the macaroon.
-  # @param caveats [Array<String>] the list of caveats to include in the macaroon.
-  # @param amount [Integer] the amount to be paid in millisatoshis.
-  # @return [Array<(Macaroon, String)>] returns the macaroon and the payment request as a string.
+  # @param config [Object] Configuration containing the root key and caveats.
+  # @return [Array(Macaroon, Hash)] Returns a tuple with the macaroon and invoice details.
   def self.get_payment_request_details(config)
     invoice = generate_invoice('description', 100).to_h
 

@@ -3,6 +3,15 @@
 require 'l402_logger'
 
 module L402Middleware
+  # The Configuration class handles the setup and validation of necessary parameters
+  # for L402 middleware operation. It supports integration with LND and LNURL networks.
+  #
+  # Attributes:
+  # - `network_type` [Symbol]: The type of network used (`:lnd` or `:lnurl`).
+  # - `root_key` [String]: The root key used for generating macaroons.
+  # - `caveats` [Array]: Array of caveats to be applied to macaroons.
+  # - `lnd` [Hash]: Configuration details for LND network type.
+  # - `lnurl` [Hash]: Configuration details for LNURL network type.
   class Configuration
     attr_reader :network_type, :root_key, :caveats, :lnd, :lnurl
 
@@ -22,6 +31,10 @@ module L402Middleware
       @lnurl = config[:lnurl]
     end
 
+    # Validates the configuration to ensure all required parameters are present and valid.
+    #
+    # @raise [StandardError] Raises an error if any required field is missing or invalid.
+    # @return [Boolean] Returns true if the configuration is valid.
     def validate!
       unless ALLOWED_NETWORK_TYPES.include?(@network_type)
         raise "Invalid network type. Allowed types: #{ALLOWED_NETWORK_TYPES.join(',')}"

@@ -23,8 +23,6 @@ module L402Middleware
     end
 
     def call(env)
-      # L402Logger.debug("Processing request with env: #{env.to_h}")
-
       token = extract_auth_token(env)
       is_valid_l402_token, err = valid_l402_token?(token)
 
