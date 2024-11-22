@@ -17,7 +17,7 @@ RSpec.describe 'L402Middleware Utils' do
 
     it 'returns an empty hash if the macaroon is not a Macaroon instance' do
       allow(macaroon).to receive(:is_a?).with(Macaroon).and_return(false)
-      expect(L402Middleware::Utils.get_macaroon_details(macaroon)).to eq({})
+      expect(get_macaroon_details(macaroon)).to eq({})
     end
 
     it 'extracts instance variables from the raw macaroon' do
@@ -25,7 +25,7 @@ RSpec.describe 'L402Middleware Utils' do
       allow(raw_macaroon).to receive(:instance_variable_get).with(:@var1).and_return('value1')
       allow(raw_macaroon).to receive(:instance_variable_get).with(:@var2).and_return('value2')
 
-      result = L402Middleware::Utils.get_macaroon_details(macaroon)
+      result = get_macaroon_details(macaroon)
       expect(result).to eq({:@var1 => 'value1', :@var2 => 'value2'})
     end
   end
@@ -38,7 +38,7 @@ RSpec.describe 'L402Middleware Utils' do
     end
 
     it 'returns the Base64-encoded macaroon' do
-      expect(L402Middleware::Utils.get_macaroon_signature(macaroon)).to eq(Base64.strict_encode64('serialized_macaroon'))
+      expect(get_macaroon_signature(macaroon)).to eq(Base64.strict_encode64('serialized_macaroon'))
     end
   end
 
@@ -46,7 +46,7 @@ RSpec.describe 'L402Middleware Utils' do
     it 'returns a regex that matches the L402 header size' do
       header_length = L402_HEADER.size + 1
       expected_regex = /^.{#{header_length}}/ 
-      expect(L402Middleware::Utils.sub_l402_header_regex).to eq(expected_regex)
+      expect(sub_l402_header_regex).to eq(expected_regex)
     end
   end
 
@@ -61,7 +61,7 @@ RSpec.describe 'L402Middleware Utils' do
     it 'returns the correct payment header' do
       signature = Base64.strict_encode64('serialized_macaroon')
       expected_header = "#{L402_HEADER} macaroon=#{signature}, invoice=#{invoice[:response][:payment_request]}"
-      expect(L402Middleware::Utils.get_payment_header(macaroon, invoice)).to eq(expected_header)
+      expect(get_payment_header(macaroon, invoice)).to eq(expected_header)
     end
   end
 
@@ -74,7 +74,7 @@ RSpec.describe 'L402Middleware Utils' do
         message: 'The macaroon or preimage provided is incorrect or invalid.'
       }.to_json
 
-      expect(L402Middleware::Utils.unauthorized_response).to eq(expected_response)
+      expect(unauthorized_response).to eq(expected_response)
     end
   end
 
@@ -103,7 +103,7 @@ RSpec.describe 'L402Middleware Utils' do
         amount: 100
       }.to_json
 
-      expect(L402Middleware::Utils.request_payment_response(macaroon, invoice)).to eq(expected_response)
+      expect(request_payment_response(macaroon, invoice)).to eq(expected_response)
     end
   end
 end

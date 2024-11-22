@@ -17,7 +17,7 @@ module L402Logger
       logger.level = Logger::DEBUG
 
       logger.formatter = proc do |severity, timestamp, _progname, msg|
-        "#{timestamp}::[L402_MIDDLEWARE - #{severity}]::#{msg}\n"
+        "[L402_MIDDLEWARE]::#{timestamp}::#{severity}::#{msg}\n"
       end
 
       logger
