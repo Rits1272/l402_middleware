@@ -23,7 +23,6 @@ module L402Middleware
     end
 
     def call(env)
-      L402Logger.info("ENV: #{env.to_h}")
       token = extract_auth_token(env)
       is_valid_l402_token, err = valid_l402_token?(token)
 
@@ -31,9 +30,7 @@ module L402Middleware
         return allow_request(env)
       end
 
-      is_unauthorized = env[L402_AUTHORIZATION_HEADER].present? 
-
-      invoke_payment(is_unauthorized)
+      invoke_payment(env[L402_AUTHORIZATION_HEADER].present?)
     end
 
     private
@@ -133,7 +130,7 @@ module L402Middleware
     # Placeholder method
     def connect_to_lnurl
       @config.lnurl
-      raise 'lnurl to be supported with this middeware yet'
+      raise 'integration with lnurl is WIP'
     end
 
     def free?(request)

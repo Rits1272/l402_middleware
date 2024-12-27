@@ -41,7 +41,7 @@ module L402Middleware
 
       true
     rescue StandardError => e
-      L402Logger.error("Configuration validation error: #{e.message}")
+      L402Logger.error("config validation failed: #{e.message}")
       raise e
     end
 
@@ -58,7 +58,7 @@ module L402Middleware
     def validate_network_type
       return if ALLOWED_NETWORK_TYPES.include?(@network_type)
 
-      raise "Invalid network type. Allowed types: #{ALLOWED_NETWORK_TYPES.join(', ')}"
+      raise "Invalid network type: #{@network_type}. Allowed types: #{ALLOWED_NETWORK_TYPES.join(', ')}"
     end
 
     def validate_network_config
