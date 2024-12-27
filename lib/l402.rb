@@ -40,7 +40,6 @@ class L402
   end
 
   def self.generate_invoice(invoice_config)
-    L402Logger.info("invoice config")
     Lighstorm::Lightning::Invoice.create(
       description: invoice_config[:description],
       amount: { millisatoshis: invoice_config[:millisatoshis] },
