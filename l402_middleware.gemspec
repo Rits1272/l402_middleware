@@ -13,7 +13,7 @@ Gem::Specification.new do |s|
   s.homepage    = 'https://rubygems.org/gems/l402_middleware'
   s.license     = 'MIT'
 
-  s.metadata["source_code_uri"] = "https://github.com/rits1272/l402_middleware"
+  s.metadata['source_code_uri'] = 'https://github.com/rits1272/l402_middleware'
 
   s.add_runtime_dependency 'google-protobuf', '3.25.4'
   s.add_runtime_dependency 'lighstorm'

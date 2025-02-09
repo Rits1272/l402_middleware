@@ -26,9 +26,7 @@ module L402Middleware
       token = extract_auth_token(env)
       is_valid_l402_token, err = valid_l402_token?(token)
 
-      if free?(env['REQUEST_PATH'].to_s) || (is_valid_l402_token.to_s == "true" && err.nil?)
-        return allow_request(env)
-      end
+      return allow_request(env) if free?(env['REQUEST_PATH'].to_s) || (is_valid_l402_token.to_s == 'true' && err.nil?)
 
       invoke_payment(env[L402_AUTHORIZATION_HEADER].present?)
     end
@@ -61,7 +59,7 @@ module L402Middleware
     def valid_l402_token?(token)
       return [false, 'missing L02 header'] unless token.to_s.downcase.start_with?("#{L402_HEADER} ")
 
-      token = token.sub(sub_l402_header_regex, "")
+      token = token.sub(sub_l402_header_regex, '')
 
       macaroon_part, preimage = token.split(':', 2)
 
@@ -69,17 +67,17 @@ module L402Middleware
 
       macaroons = macaroon_part.split(',').map(&:strip)
 
-      macaroons.each  do |macaroon|
+      macaroons.each do |macaroon|
         decoded_macaroon = Base64.strict_decode64(macaroon)
         result, err = L402.verify_l402(decoded_macaroon, preimage, @config)
 
-        return [true, nil] if result.to_s == "true" && err.nil?
+        return [true, nil] if result.to_s == 'true' && err.nil?
       rescue StandardError => e
         L402Logger.error("Error verifying macaroon: #{e.message}")
-        return [false, "error verifying macaroon: #{e.message}"] 
+        return [false, "error verifying macaroon: #{e.message}"]
       end
 
-      return [false, 'unauthorized']
+      [false, 'unauthorized']
     end
 
     def allow_request(env)

@@ -68,4 +68,3 @@ RSpec.describe L402Logger do
     end
   end
 end
-

@@ -89,7 +89,8 @@ RSpec.describe L402Middleware::Configuration do
       end
 
       it 'raises an error for missing LND keys' do
-        config_data = valid_lnd_config.merge(lnd: { address: '', tls_certificate_path: 'path/to/cert', macaroon_path: '' })
+        config_data = valid_lnd_config.merge(lnd: { address: '', tls_certificate_path: 'path/to/cert',
+                                                    macaroon_path: '' })
         config = L402Middleware::Configuration.new(config_data)
         expect { config.validate! }.to raise_error('Missing required keys for lnd: address, macaroon_path')
       end
@@ -113,4 +114,3 @@ RSpec.describe L402Middleware::Configuration do
     end
   end
 end
-

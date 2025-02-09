@@ -17,7 +17,7 @@ module L402Middleware
     ALLOWED_NETWORK_TYPES = %i[lnd lnurl].freeze
     ALLOWED_PAYABLE_TYPES = %i[once indefinitely].freeze
 
-    MATCH_ALL_ENDPOINTS_REGEX = [%r{.*}]
+    MATCH_ALL_ENDPOINTS_REGEX = [/.*/].freeze
 
     def initialize(config = {})
       @network_type = config[:network_type]
@@ -91,4 +91,3 @@ module L402Middleware
     end
   end
 end
-

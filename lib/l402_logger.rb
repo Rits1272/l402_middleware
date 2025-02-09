@@ -25,7 +25,7 @@ module L402Logger
 
     def configure(output: nil, level: Logger::DEBUG)
       if defined?(Rails) && Rails.logger
-        Rails.logger.info("[L402_MIDDLEWARE] logger initialized")
+        Rails.logger.info('[L402_MIDDLEWARE] logger initialized')
       else
         @logger = Logger.new(output || $stdout)
         @logger.level = level
@@ -38,5 +38,4 @@ module L402Logger
       end
     end
   end
-
 end

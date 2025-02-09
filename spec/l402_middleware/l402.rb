@@ -6,7 +6,7 @@ require 'lighstorm'
 
 RSpec.describe L402 do
   let(:config) do
-    double('config', root_key: 'root_key', caveats: ['caveat_1', 'caveat_2'])
+    double('config', root_key: 'root_key', caveats: %w[caveat_1 caveat_2])
   end
   let(:macaroon) { 'some_macaroon' }
   let(:preimage) { 'some_preimage' }
@@ -91,6 +91,20 @@ RSpec.describe L402 do
       expect(result[0]).to be_an_instance_of(Macaroon)
       expect(result[1]).to eq(invoice_hash)
     end
+
+    it 'adds all configured caveats to the macaroon' do
+      invoice_hash = { response: { r_hash: 'some_hash' } }
+      allow(L402).to receive(:generate_invoice).and_return(invoice_hash)
+
+      macaroon = instance_double(Macaroon)
+      allow(Macaroon).to receive(:new).and_return(macaroon)
+
+      # Expect each caveat to be added
+      config.caveats.each do |caveat|
+        expect(macaroon).to receive(:add_first_party_caveat).with(caveat)
+      end
+
+      L402.get_payment_request_details(config)
+    end
   end
 end
-

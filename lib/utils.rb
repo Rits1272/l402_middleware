@@ -7,7 +7,6 @@ require 'json'
 require 'l402_logger'
 require 'constants'
 
-
 # Extracts details from a macaroon object, including its internal variables.
 #
 # @param macaroon [Macaroon] The macaroon object to extract details from.
@@ -59,10 +58,10 @@ end
 # @return [String] A JSON-formatted string representing an unauthorized response.
 def unauthorized_response
   {
-    :status => "failure",
-    :status_code => 402,
-    :error => "invalid_macaron_or_preimage",
-    :message => "The macaroon or preimage provided is incorrect or invalid.",
+    status: 'failure',
+    status_code: 402,
+    error: 'invalid_macaron_or_preimage',
+    message: 'The macaroon or preimage provided is incorrect or invalid.'
   }.to_json
 end
 
@@ -73,12 +72,12 @@ end
 # @return [String] A JSON-formatted string containing payment request details.
 def request_payment_response(macaroon, invoice)
   {
-    :status => "success",
-    :status_code => 200,
-    :macaroon => get_macaroon_signature(macaroon),
-    :payment_request => invoice.dig(:response, :payment_request),
-    :description => invoice.dig(:result, :description, :memo),
-    :expires_at => invoice.dig(:result, :expires_at),
-    :amount => invoice.dig(:result, :amount)
+    status: 'success',
+    status_code: 200,
+    macaroon: get_macaroon_signature(macaroon),
+    payment_request: invoice.dig(:response, :payment_request),
+    description: invoice.dig(:result, :description, :memo),
+    expires_at: invoice.dig(:result, :expires_at),
+    amount: invoice.dig(:result, :amount)
   }.to_json
 end

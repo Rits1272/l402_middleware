@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 require 'macaroons'
 require 'base64'
@@ -21,12 +23,12 @@ RSpec.describe 'L402Middleware Utils' do
     end
 
     it 'extracts instance variables from the raw macaroon' do
-      allow(raw_macaroon).to receive(:instance_variables).and_return([:@var1, :@var2])
+      allow(raw_macaroon).to receive(:instance_variables).and_return(%i[@var1 @var2])
       allow(raw_macaroon).to receive(:instance_variable_get).with(:@var1).and_return('value1')
       allow(raw_macaroon).to receive(:instance_variable_get).with(:@var2).and_return('value2')
 
       result = get_macaroon_details(macaroon)
-      expect(result).to eq({:@var1 => 'value1', :@var2 => 'value2'})
+      expect(result).to eq({ :@var1 => 'value1', :@var2 => 'value2' })
     end
   end
 
@@ -45,7 +47,7 @@ RSpec.describe 'L402Middleware Utils' do
   describe '#sub_l402_header_regex' do
     it 'returns a regex that matches the L402 header size' do
       header_length = L402_HEADER.size + 1
-      expected_regex = /^.{#{header_length}}/ 
+      expected_regex = /^.{#{header_length}}/
       expect(sub_l402_header_regex).to eq(expected_regex)
     end
   end

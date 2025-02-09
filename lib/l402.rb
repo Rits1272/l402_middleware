@@ -17,6 +17,10 @@ require 'l402_logger'
 # - Create payment request details with associated macaroons and invoices.
 class L402
   def self.verify_l402(macaroon, preimage, config)
+    # Add validation for required inputs
+    raise ArgumentError, 'Macaroon is required' if macaroon.nil? || macaroon.empty?
+    raise ArgumentError, 'Preimage is required' if preimage.nil? || preimage.empty?
+
     mac = Macaroon.new(key: config.root_key, identifier: macaroon, location: L402_ORIGIN)
 
     verifier = Macaroon::Verifier.new
@@ -40,6 +44,9 @@ class L402
   end
 
   def self.generate_invoice(invoice_config)
+    # Validate required invoice fields
+    raise ArgumentError, 'Missing required invoice fields' unless valid_invoice_config?(invoice_config)
+
     Lighstorm::Lightning::Invoice.create(
       description: invoice_config[:description],
       amount: { millisatoshis: invoice_config[:millisatoshis] },
@@ -62,5 +69,13 @@ class L402
     end
 
     [m, invoice]
+  end
+
+  # Add helper method for invoice validation
+  def self.valid_invoice_config?(config)
+    return false unless config.is_a?(Hash)
+
+    required_fields = %i[description millisatoshis payable]
+    required_fields.all? { |field| config.key?(field) }
   end
 end
